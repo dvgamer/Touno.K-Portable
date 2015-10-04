@@ -1,0 +1,217 @@
+/* CSS Document */
+body {
+	background-color: #FFFFFF;
+	font-family: "Tahoma";
+	font-size: 11px;
+	margin: 0px;
+	padding: 0px;
+}
+a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #000;
+}
+a:hover { text-decoration: underline; }
+li { margin: 1px 0 1px 35px; }
+fieldset { padding: 5px; }
+legend {
+	font-weight: bold;
+	font-size: 12px;
+}
+/* Header CSS */
+.logo {
+	background: url(images/resources.jpg) -127px -235px no-repeat;
+	width: 200px;
+	height: 55px;
+}
+.header {
+	background-color: #000;
+	height: 60px;
+	color: #FFF;
+}
+.subheader {
+	background-color: #e6e6e6;
+	height: 245px;
+}
+.footer {
+	margin: 15px 0 0 0 !important;
+	text-align: right;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 9px 15px 0 0 !important;
+	height: 22px !important;
+}
+.selected { color: #cc0000 !important; }
+.menu {
+	display: inline-table;
+	padding: 5px 15px 0 15px;
+	font-family: "Trebuchet MS", Tahoma;
+	font-weight: bold;
+	font-size: 14px;
+	color: #16b3f1;
+}
+.menu:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+.serachbox, .newsbox {
+	width: 350px;
+	background-color: #ffffff;
+	/*
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	*/
+	margin: 10px;
+	padding: 5px;
+}
+.topicsbox { padding: 25px 0px 20px 0; }
+.onlines {
+	width: 39px;
+	height: 22px;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 3px 49px 0 0;
+	text-align: right;
+	background: url(images/bg-onlines.jpg) no-repeat;
+}
+input.serach, input.go {
+	padding: 0px;
+	margin: 0px;
+	background-color: #ffffff;
+}
+input.serach {
+	width: 165px;
+	height: 15px;
+	border: #ebebeb solid 1px;
+	margin: 10px !important;
+	padding: 4px 0 4px 5px !important;
+	font-size: 11px;
+}
+input.go:disabled {
+	color: #999;
+	cursor: default;
+}
+input.go {
+	width: 40px;
+	height: 25px;
+	border: #ebebeb solid 1px;
+	font-size: 11px;
+	color: #0aafde;
+	cursor: pointer;
+}
+.topics-image, .topics-subject, .topics-content {
+	color: #323232;
+	font-family: "Segoe UI";
+}
+.topics-image {
+	width: 200px;
+	height: 200px;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+}
+.topics-subject {
+	font-size: 20px;
+	font-weight: bold;
+	padding: 15px 0 0 10px;
+}
+.topics-content {
+	width: 350px;
+	font-size: 11px;
+	padding: 3px 0 0 10px;
+}
+.title {
+	background: url(images/resources.jpg) 0px 0px repeat-x;
+	padding: 8px 0 0 15px;
+	margin: 15px 10px 15px 10px;
+	height: 23px;
+	color: #ffffff;
+}
+.advert {
+	background: #FFF url(images/resources.jpg) 0px -235px no-repeat;
+	margin: 5px;
+	height: 125px;
+	width: 125px;
+	padding: 1px;
+	border: #b5b5b5 solid 1px;
+}
+.panel { /*display: none;*/ }
+/* Manga Config */
+.control {
+	margin: -10px 10px 0 10px;
+	padding: 2px 5px 0 5px;
+	background-color: #F7F7F7;
+}
+.pconfig {
+	width: 100%;
+	background-color: #F7F7F7;
+}
+.config, .save, .cancel, .back, #listAdd, #listDelete {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+	background: url(images/resources.jpg) repeat;
+	cursor: pointer;
+}
+.config, .save, .cancel, .back { height: 34px; }
+.config {
+	background-position: 0px -31px;
+	width: 93px;
+}
+.save {
+	background-position: -90px -31px;
+	width: 113px;
+}
+.cancel {
+	background-position: -200px -31px;
+	width: 110px;
+}
+.back {
+	background-position: -310px -31px;
+	width: 87px;
+}
+.config:hover { background-position: 0px -65px; }
+.save:hover { background-position: -90px -65px; }
+.cancel:hover { background-position: -200px -65px; }
+.back:hover { background-position: -310px -65px; }
+.codis { background-position: 0px -99px !important; }
+.sadis { background-position: -90px -99px !important; }
+.cadis { background-position: -310px -99px !important; }
+.badis {
+	background-position: -310px -99px !important;
+	cursor: default !important;
+}
+.selectlist {
+	width: 510px;
+	margin-top: 3px;
+	border: none;
+}
+.viewlist { margin: 5px 10px 0 10px; }
+#listAdd, #listDelete {
+	height: 26px;
+	margin: 3px;
+}
+#listAdd {
+	background-position: -269px -134px;
+	width: 68px;
+}
+#listDelete {
+	background-position: -171px -134px;
+	width: 98px;
+}
+#addmanga {
+	width: 420px;
+	margin: 0px 0px 5px 0px;
+	color: #AAA
+}
+#listAdd:hover { background-position: -269px -160px; }
+#listDelete:hover { background-position: -171px -160px; }
+.addis {
+	background-position: -269px -186px !important;
+	cursor: default !important;
+}
+.dedis {
+	background-position: -171px -186px !important;
+	cursor: default !important;
+}

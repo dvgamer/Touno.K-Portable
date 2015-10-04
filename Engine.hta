@@ -1,0 +1,302 @@
+﻿<!doctype html>
+<head>
+<meta charset="utf-8">
+<title>HaKkoMEw-FS</title>
+<HTA:APPLICATION ID="oHTA" APPLICATIONNAME = "HaKkoMEw-FS" SINGLEINSTANCE = "yes" ICON = "include/devhakko.ico" SCROLL = "yes" 
+MAXIMIZEBUTTON = "yes" NAVIGABLE = "no" SELECTION = "no" CONTEXTMENU = "no" BORDER = "thin" INNERBORDER = "no"></HTA:APPLICATION>
+<link rel="stylesheet" type="text/css" href="Include/StyleSheet.css" />
+<script language="javascript" src="Include/jquery.min-1.8.2.js"></script>
+<script language="javascript" src="Include/jquery.ba-bbq.js"></script>
+<script language="javascript">
+function setSize1(){ setWindowSize(1280, 720); }
+function setWindowSize(width, height){ window.resizeTo(width, height); }
+function launch(program){(new ActiveXObject('WScript.Shell')).Run(program);void(0);}
+function handleLaunchErr(msg,url,l){ alert(msg); return true; }
+function initialize() {
+    setTimeout(setSize1, 0);
+    document.body.style.visibility = "visible";
+}
+</script>
+<script for="window" event="onload">
+onerror = handleLaunchErr;
+initialize();
+</script>
+<script type="text/javascript">  
+var folder;
+var curr = "m";
+$(function(){
+	$('.panel').fadeOut(0);
+	$('#online').css("background-position","0 -25px");
+	$('#online').html(" - ");
+	$('#csave').fadeOut(0);
+	$('#ccancel').fadeOut(0);
+	$('div.pconfig').fadeOut(0);
+	$.ajax("Include/config.json",{
+		dataType:"json",
+		success: function(data){
+			var axo = new ActiveXObject("Scripting.FileSystemObject");
+			
+			for(var i=0;i<data.dir.length;i++) {
+				if(axo.FolderExists(data.dir[i])) {
+					var path = axo.GetFolder(data.dir[i]);
+					var ent = new Enumerator(path.Files);
+
+					for(l=0;!ent.atEnd();ent.moveNext()) {
+						$('.viewlist').append('<div>'+ent.item().name+'</div>');
+					}
+				}
+			}
+			folder = data.dir;			
+		}
+	});
+
+	
+	$(window).resize(function(e) {
+        $('.viewlist').html($('.viewlist').width());
+    });
+	
+	$(window).bind("hashchange", function(e) {
+		var url = $.param.fragment();
+		if(!url) url = curr;
+		$('.menu').each(function(i,e) { $(e).removeClass("selected"); });
+		$('#i'+url).addClass("selected");
+		
+		if($('body').attr("refresh")=="true") {
+			$('#panel_'+url).fadeIn(0);
+		} else {
+			$('#panel_'+curr).fadeOut(0, function(){ $('#panel_'+url).fadeIn(0); });
+		}
+		curr = url;
+	});
+	$(window).trigger("hashchange");
+	
+	var hConfig = $('div.pconfig').height();
+	$('#cconfig').click(function(e){
+		$('#csave').removeClass("sadis");
+		$('#cconfig').addClass("codis");
+		$.ajax("Include/config.json",{
+			dataType:"json",
+			error: function(e) {
+				alert("ERROR:: Config");
+			},
+			success: function(data){
+				$('#listDelete').addClass("dedis");
+				$('#cconfig').removeClass("codis");
+				$('#dirmanga').empty();
+				for(var i=0;i<data.dir.length;i++) {
+					$('#dirmanga').append("<option>"+data.dir[i]+"</option>");
+				}				
+
+				// Animation
+				$('#cback').fadeOut(0);
+				$('#cconfig').fadeOut(0);
+				$('#csave').fadeIn(200);
+				$('#ccancel').fadeIn(200);
+				$('div.pconfig').height(0).fadeIn(0).animate({
+					height:hConfig
+				},100, function(){
+					
+				});
+			}
+		});
+	});
+	
+	$('#csave').click(function(e){		
+		var axo = new ActiveXObject("Scripting.FileSystemObject");
+		var file = axo.CreateTextFile("Include/config.json", true);
+		var sDir;
+		$('#csave').addClass("sadis");
+		file.Write('{"dir":["');
+		$('#dirmanga option').each(function(i, e) {
+			sDir = "";
+			for(var s=0;s<$(e).val().length;s++) {
+				if($(e).val().substr(s,1)!="\\") {
+					sDir += $(e).val().substr(s,1);
+				} else {
+					sDir += "\\\\";
+				}
+			}
+            file.Write(sDir);
+			if((i+1)<$('#dirmanga option').length) { file.Write('","'); }
+        });
+		file.Write('"]}');
+		file.Close();
+		$('#ccancel').click();		
+	});
+	$('#ccancel').click(function(e){
+		$('#cconfig').fadeIn(200);
+		$('#cback').fadeIn(200);
+		$('#csave').fadeOut(0);
+		$('#ccancel').fadeOut(0);
+		$('div.pconfig').animate({
+			height:0
+		},100, function(){
+			$('div.pconfig').height(hConfig).fadeOut(0);
+		});
+	});
+	
+	$('#dirmanga').click(function(e) {
+		if($('#dirmanga').val()!=null) $('#listDelete').removeClass("dedis");
+    });
+	
+	$('#listAdd').click(function(e) {
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+		if(jQuery.trim($('#addmanga').val())!="" && fso.FolderExists($('#addmanga').val())) {
+			var iFound = false;
+			$('#dirmanga option').each(function(i, e) {
+				if($(e).val()==$('#addmanga').val()) { iFound = true; }
+			});
+			if(!iFound) $('#dirmanga').append("<option>"+$('#addmanga').val()+"</option>");				
+		}
+		$('#addmanga').val(TXT_DEFAULT);
+		$('#addmanga').css("color","#AAA");
+		fso = null;
+    });
+	
+	$('#listDelete').click(function(e) {
+		$('#dirmanga option').each(function(i, e) {
+            if($(e).val()==jQuery.trim($('#dirmanga').val())) { $(e).remove(); $('#listDelete').addClass("dedis"); }
+        });
+    });
+	
+	var TXT_DEFAULT = "etc. C:\\Manga";
+	$('#addmanga').focusin(function(){
+		if($('#addmanga').val()==TXT_DEFAULT) $('#addmanga').val("");
+		$('#addmanga').css("color","#333");
+	});
+	
+	$('#addmanga').focusout(function(){
+		if($('#addmanga').val()=="") {
+			$('#addmanga').val(TXT_DEFAULT);
+			$('#addmanga').css("color","#AAA");
+		}
+		
+	});
+});
+
+jQuery.fn.NavigatorButton = function(){
+	$('body').attr("refresh","false");
+}
+</script>
+</head>
+<body refresh="true">
+<a id="manga"></a><a id="downloader"></a>
+<div class="header">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td width="200"><div class="logo"></div></td>
+      <td style="padding-top:10px;"><a href="#m"><span class="menu" id="im" onClick="$(this).NavigatorButton();">manga</span></a><strong> | </strong> <a href="#d"><span class="menu" id="id" onClick="$(this).NavigatorButton();">downloader</span></a></td>
+    </tr>
+  </table>
+</div>
+<div class="subheader">
+  <center>
+    <table width="1024" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="610" height="227" style="padding-left:20px;"><div class="topicsbox">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="right">
+              <tr>
+                <td align="left" width="200"><div class="topics-image" style="background-image:url(Include/images/who%27swho.jpg)"></div></td>
+                <td width="438" align="left" valign="top"><div class="topics-subject">เปิดตัวครั้งใหญ่กับ HaKko-FS </div>
+                  <div class="topics-content">ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย ภาษาไทย </div></td>
+              </tr>
+            </table>
+          </div></td>
+        <td><div class="serachbox">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td colspan="3" style="color:#0aafde; padding:3px 0 0 5px;" align="left"><strong>ค้นหา</strong></td>
+              </tr>
+              <tr>
+                <td width="53%" align="left"><input type="text" class="serach" value="ปิดบริการ" maxlength="30" disabled></td>
+                <td width="19%" align="left"><input type="button" class="go" value="GO" disabled></td>
+                <td width="28%" align="left"><div class="onlines" id="online">0</div></td>
+              </tr>
+            </table>
+          </div>
+          <div class="newsbox">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td colspan="3" style="color:#0aafde; padding:3px 0 0 5px;" align="left"><strong>ข่าวใหม่</strong></td>
+              </tr>
+              <tr>
+                <td align="left"> - </td>
+                <td align="center">&nbsp;</td>
+                <td align="right">- </td>
+              </tr>
+            </table>
+          </div></td>
+      </tr>
+    </table>
+  </center>
+</div>
+<div class="main">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td valign="top"><div id="panel_m" class="panel">
+          <div class="title">รายการ</div>
+          <div class="control">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+                 <input type="button" id="cback"  class="back badis" disabled="disabled"/>
+                 <input type="button" id="ccancel" class="cancel"/>
+                 <input type="button" id="csave" class="save"/>
+                </td>
+                <td align="right">
+                 <input type="button" id="cconfig" class="config"/>
+                </td>
+              </tr>
+            </table>
+            <div class="pconfig">
+              <table width="800" border="0" cellspacing="0" cellpadding="3">
+                <tr>
+                  <td width="522"><fieldset>
+                      <legend>เพิ่มลงรายการ</legend>
+                      <input type="button" id="listAdd" value=""/>
+                      <input type="text" id="addmanga" value="etc. C:\Manga"/>
+                    </fieldset></td>
+                  <td width="288">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td><fieldset>
+                      <legend>Directory Manga</legend>
+                      <select id="dirmanga" class="selectlist" size="10">
+                      </select>
+                    </fieldset></td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td><input type="button" id="listDelete" value="" /></td>
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="viewlist">Table List</div>
+          </div>
+        <div id="panel_d" class="panel">
+          <div class="title">ตั้งค่า</div>
+          downloader </div></td>
+      <td valign="top" width="310"><table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:10px;">
+          <tr>
+            <td width="50%" align="right"><div class="advert" id="adblock1"><img src="http://al3e.ru/advertise/ad_dl.gif" width="125" height="125"></div></td>
+            <td width="50%" align="left"><div class="advert" id="adblock2"><img src="http://al3e.ru/advertise/ad_hibara.gif" width="125" height="125"></div></td>
+          </tr>
+          <tr>
+            <td align="right"><div class="advert" id="adblock3"></div></td>
+            <td align="left"><div class="advert" id="adblock4"></div></td>
+          </tr>
+        </table>
+        <div class="title">ผู้สนับสนุน</div>
+        <li><a href="http://al3e.ru/">al3e.pn.ru</a></li>
+        <li><a href="http://hakkomew.facebook.com/">hakkomew.facebook.com</a></li></td>
+    </tr>
+  </table>
+  <div class="title footer">Power By HaKkoMEw-FS.</div>
+</div>
+</body>
+</html><!--
+onClick="window.focus(); popWindow('Setup.html', 'wndReadme');"
+javascript:launch('vcExpress\\setup.exe')
+-->
